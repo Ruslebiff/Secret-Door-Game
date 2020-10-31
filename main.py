@@ -220,16 +220,39 @@ class projectile(object):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
 
 
+class Door(object):
+    def __init__(self, x, y, width, height, color, visible):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.color = color
+        self.visible = visible
+        self.enabled = True
+        self.hitbox = (self.x, self.y, width, height)
+
+    def draw(self, win):
+        if self.visible:
+            pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 2)
+
+    def enter(self):
+        if self.enabled:
+            print('Entered door!')
+
+
 score = 0
 shootLoop = 0
 bullets = []
 enemies = []
+doors = []
 player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64)
 enemies.append(Enemy(100, 410, 64, 64, 450))
+doors.append(Door(50, 50, 80, 120, (150, 150, 150), True))
 
 
 def redrawGameWindow():
     win.blit(bg, (0, 0))  # background
+    doors[0].draw(win)
     player1.draw(win)
 
     for emeny in enemies:
@@ -283,6 +306,13 @@ while run:
 
     # Key bindings
     keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_RETURN]:
+        # Enter door if player's hitbox touches door's hitbox
+        for door in doors:
+            if player1.hitbox[1] < door.hitbox[1] + door.hitbox[3] and player1.hitbox[1] + player1.hitbox[3] > door.hitbox[1]:
+                if player1.hitbox[0] + player1.width > door.hitbox[0] and player1.hitbox[0] < door.hitbox[0] + door.hitbox[2]:
+                    door.enter()
 
     if keys[pygame.K_SPACE] and shootLoop == 0:
         if player1.right:
