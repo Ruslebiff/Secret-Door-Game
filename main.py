@@ -161,7 +161,6 @@ class Enemy(object):
             self.health -= 1
         else:
             enemies.pop(enemies.index(enemy))
-        print('hit')
 
 
 class projectile(object):
