@@ -122,27 +122,25 @@ class Enemy(object):
         self.vel = 3
         self.hitbox = (self.x + 17, self.y + 2, 31, 57)
         self.health = 9
-        self.visible = True
 
     def draw(self, win):
         self.move()
-        if self.visible:
-            if self.walkCount + 1 >= 33:
-                self.walkCount = 0
+        if self.walkCount + 1 >= 33:
+            self.walkCount = 0
 
-            if self.vel > 0:
-                win.blit(self.walkRight[self.walkCount // 3], (self.x, self.y))
-                self.walkCount += 1
-            else:
-                win.blit(self.walkLeft[self.walkCount // 3], (self.x, self.y))
+        if self.vel > 0:
+            win.blit(self.walkRight[self.walkCount // 3], (self.x, self.y))
+            self.walkCount += 1
+        else:
+            win.blit(self.walkLeft[self.walkCount // 3], (self.x, self.y))
 
-            # healthbar
-            pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10)) # red
-            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - ((50/9)*(9 - self.health)), 10)) # green
+        # healthbar
+        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10)) # red
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - ((50/9)*(9 - self.health)), 10)) # green
 
-            # hitbox
-            self.hitbox = (self.x + 17, self.y + 2, 31, 57)
-            # pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)  # draw hitbox
+        # hitbox
+        self.hitbox = (self.x + 17, self.y + 2, 31, 57)
+        # pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)  # draw hitbox
 
     def move(self):
         if self.vel > 0:
@@ -162,7 +160,7 @@ class Enemy(object):
         if self.health > 0:
             self.health -= 1
         else:
-            self.visible = False
+            enemies.pop(enemies.index(enemy))
         print('hit')
 
 
@@ -198,6 +196,7 @@ score = 0
 shootLoop = 0
 bullets = []
 enemies = []
+enemies.append(Enemy(100, 410, 64, 64, 450))
 
 
 def redrawGameWindow():
@@ -218,11 +217,10 @@ while run:
     clock.tick(27)
 
     for enemy in enemies:
-        if enemy.visible:
-            if player1.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and player1.hitbox[1] + player1.hitbox[3] > enemy.hitbox[1]:
-                if player1.hitbox[0] + player1.hitbox[2] > enemy.hitbox[0] and player1.hitbox[0] < enemy.hitbox[0] + enemy.hitbox[2]:
-                    player1.hit()
-                    score -= 5
+        if player1.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and player1.hitbox[1] + player1.hitbox[3] > enemy.hitbox[1]:
+            if player1.hitbox[0] + player1.hitbox[2] > enemy.hitbox[0] and player1.hitbox[0] < enemy.hitbox[0] + enemy.hitbox[2]:
+                player1.hit()
+                score -= 5
 
     if shootLoop > 0:
         shootLoop += 1
@@ -234,12 +232,12 @@ while run:
             run = False
 
     for bullet in bullets:
-        # if enemy1.visible:
-        #     if bullet.y - bullet.radius < enemy1.hitbox[1] + enemy1.hitbox[3] and bullet.y + bullet.radius > enemy1.hitbox[1]:
-        #         if bullet.x + bullet.radius > enemy1.hitbox[0] and bullet.x - bullet.radius < enemy1.hitbox[0] + enemy1.hitbox[2]:
-        #             enemy1.hit()
-        #             score += 1
-        #             bullets.pop(bullets.index(bullet))
+        for enemiy in enemies:
+            if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
+                if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
+                    enemy.hit()
+                    score += 1
+                    bullets.pop(bullets.index(bullet))
 
 
         if bullet.x < SCREEN_WIDTH and bullet.x > 0:
