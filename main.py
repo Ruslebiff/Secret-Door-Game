@@ -17,6 +17,8 @@ clock = pygame.time.Clock()
 
 
 class Player(object):
+    walkUp = pygame.image.load(os.path.join('resources', 'player_behind.png'))
+    walkDown = pygame.image.load(os.path.join('resources', 'player_front.png'))
     walkRight = [
         pygame.image.load(os.path.join('resources', 'player_R1.png')),
         pygame.image.load(os.path.join('resources', 'player_R2.png')),
@@ -118,6 +120,8 @@ class Player(object):
 
 
 class Enemy(object):
+    walkUp = pygame.image.load(os.path.join('resources', 'enemy_behind.png'))
+    walkDown = pygame.image.load(os.path.join('resources', 'enemy_front.png'))
     walkRight = [
         pygame.image.load(os.path.join('resources', 'enemy_R1.png')),
         pygame.image.load(os.path.join('resources', 'enemy_R2.png')),
