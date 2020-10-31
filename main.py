@@ -54,7 +54,7 @@ class Player(object):
         self.right = False
         self.up = False
         self.down = False
-        self.standing = True
+        # self.standing = True
         self.health = 9
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
 
@@ -62,17 +62,16 @@ class Player(object):
         if self.walkCount + 1 >= 27:
             self.walkCount = 0
 
-        if not(self.standing):
-            if self.left:
-                win.blit(self.walkLeft[self.walkCount//3], (self.x, self.y))
-                self.walkCount += 1
-            elif self.right:
-                win.blit(self.walkRight[self.walkCount//3], (self.x, self.y))
-                self.walkCount += 1
-            elif self.up:
-                win.blit(self.walkUp, (self.x, self.y))
-            elif self.down:
-                win.blit(self.walkDown, (self.x, self.y))
+        if self.left:
+            win.blit(self.walkLeft[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+        elif self.right:
+            win.blit(self.walkRight[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+        elif self.up:
+            win.blit(self.walkUp, (self.x, self.y))
+        elif self.down:
+            win.blit(self.walkDown, (self.x, self.y))
         else:
             win.blit(self.walkDown, (self.x, self.y))
 
@@ -314,7 +313,7 @@ while run:
         player1.x -= player1.vel
         player1.left = True
         player1.right = False
-        player1.standing = False
+        # player1.standing = False
         if not(keys[pygame.K_UP] or keys[pygame.K_DOWN]):  # reset u/d
             player1.up = False
             player1.down = False
@@ -323,14 +322,14 @@ while run:
         player1.x += player1.vel
         player1.left = False
         player1.right = True
-        player1.standing = False
+        # player1.standing = False
         if not(keys[pygame.K_UP] or keys[pygame.K_DOWN]):  # reset u/d
             player1.up = False
             player1.down = False
 
     if keys[pygame.K_UP] and player1.y > player1.vel:
         player1.y -= player1.vel
-        player1.standing = False
+        # player1.standing = False
         player1.down = False
         player1.up = True
         if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):  # reset l/r
@@ -339,7 +338,7 @@ while run:
 
     if keys[pygame.K_DOWN] and player1.y < SCREEN_HEIGHT - player1.vel - player1.height:
         player1.y += player1.vel
-        player1.standing = False
+        # player1.standing = False
         player1.down = True
         player1.up = False
         if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):  # reset l/r
