@@ -72,16 +72,16 @@ class Player(object):
                 win.blit(self.walkLeft[0], (self.x, self.y))
 
         # healthbar
-        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5)) # red
-        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50 - round(((50/9)*(9 - self.health))), 5)) # green
+        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5))  # red
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50 - round(((50/9)*(9 - self.health))), 5))  # green
 
         # hitbox
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
         # pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)  # draw hitbox
 
     def hit(self):
-        self.x = 60
-        self.y = 410
+        self.x = round(SCREEN_WIDTH/2 - 32)
+        self.y = round(SCREEN_HEIGHT/2 - 32)
         self.walkCount = 0
         pygame.display.update()
 
@@ -168,10 +168,11 @@ class Enemy(object):
             self.walkCount += 1
         else:
             win.blit(self.walkLeft[self.walkCount // 3], (self.x, self.y))
+            self.walkCount += 1
 
         # healthbar
-        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5)) # red
-        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50 - round(((50/9)*(9 - self.health))), 5)) # green
+        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5))  # red
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50 - round(((50/9)*(9 - self.health))), 5))  # green
 
         # hitbox
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
@@ -215,7 +216,7 @@ score = 0
 shootLoop = 0
 bullets = []
 enemies = []
-player1 = Player(300, 410, 64, 64)
+player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64)
 enemies.append(Enemy(100, 410, 64, 64, 450))
 
 
@@ -258,7 +259,6 @@ while run:
                     score += 1
                     bullets.pop(bullets.index(bullet))
 
-
         if bullet.x < SCREEN_WIDTH and bullet.x > 0:
             bullet.x += bullet.vel
         else:
@@ -293,6 +293,18 @@ while run:
         player1.right = True
         player1.standing = False
 
+    elif keys[pygame.K_UP] and player1.y > player1.vel:
+        player1.y -= player1.vel
+        player1.left = False
+        player1.right = False
+        player1.standing = True
+
+    elif keys[pygame.K_DOWN] and player1.y < SCREEN_HEIGHT - player1.vel - player1.height:
+        player1.y += player1.vel
+        player1.left = False
+        player1.right = False
+        player1.standing = True
+
     else:
         player1.standing = True
         player1.walkCount = 0
@@ -301,4 +313,3 @@ while run:
 
 """ main loop end """
 pygame.quit()
-
