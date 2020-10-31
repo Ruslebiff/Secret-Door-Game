@@ -207,13 +207,15 @@ class Enemy(object):
 
 
 class projectile(object):
-    def __init__(self, x, y, radius, color, facing):
-        self.x = x
-        self.y = y
+    def __init__(self, x, y, radius, color, facingx, facingy):
+        self.x = x  # starting position
+        self.y = y  # starting position
         self.radius = radius
         self.color = color
-        self.facing = facing
-        self.vel = 8 * facing
+        self.facingx = facingx  # projectile goes left or right
+        self.facingy = facingy  # projectile goes up or down
+        self.xvel = 8 * facingx
+        self.yvel = 8 * facingy
 
     def draw(self, win):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
@@ -244,21 +246,26 @@ run = True
 while run:
     clock.tick(27)
 
+    # Quit game when clicking 'x'
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+
+    # Hit when touching enemies
     for enemy in enemies:
         if player1.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and player1.hitbox[1] + player1.hitbox[3] > enemy.hitbox[1]:
             if player1.hitbox[0] + player1.hitbox[2] > enemy.hitbox[0] and player1.hitbox[0] < enemy.hitbox[0] + enemy.hitbox[2]:
                 player1.hit()
 
+    # Prevent multi-shooting
     if shootLoop > 0:
         shootLoop += 1
     if shootLoop > 3:
         shootLoop = 0
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-
+    # Bullets
     for bullet in bullets:
+        # hit enemies
         for enemiy in enemies:
             if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
                 if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
@@ -266,25 +273,39 @@ while run:
                     score += 1
                     bullets.pop(bullets.index(bullet))
 
+        # move bullet
         if bullet.x < SCREEN_WIDTH and bullet.x > 0:
-            bullet.x += bullet.vel
+            bullet.x += bullet.xvel
+        if bullet.y < SCREEN_HEIGHT and bullet.y > 0:
+            bullet.y += bullet.yvel
         else:
-            bullets.pop(bullets.index(bullet))
+            bullets.pop(bullets.index(bullet))  # remove bullet
 
+    # Key bindings
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_SPACE] and shootLoop == 0:
         if player1.right:
-            facing = 1
+            facingx = 1
+        elif player1.left:
+            facingx = -1
         else:
-            facing = -1
+            facingx = 0
+
+        if player1.up:
+            facingy = -1
+        elif player1.down:
+            facingy = 1
+        else:
+            facingy = 0
         if len(bullets) < MAX_BULLETS:
             bullets.append(projectile(
                 round(player1.x + player1.width // 2),
                 round(player1.y + player1.height // 2),
                 6,  # radius
                 (0, 0, 0),  # bullet color
-                facing
+                facingx,
+                facingy
                 ))
         shootLoop = 1
 
@@ -314,10 +335,14 @@ while run:
         player1.standing = False
         player1.down = True
         player1.up = False
+        if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):
+            player1.left = False
+            player1.right = False
 
     if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_UP]):
         player1.standing = True
 
+    # Update screen
     redrawGameWindow()
 
 """ main loop end """
