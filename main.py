@@ -278,7 +278,7 @@ while run:
         if bullet.y < SCREEN_HEIGHT and bullet.y > 0:
             bullet.y += bullet.yvel
 
-        if bullet.x > SCREEN_WIDTH or bullet.x <= 0 or bullet.y > SCREEN_HEIGHT or bullet.y <= 0:
+        if bullet.x >= SCREEN_WIDTH or bullet.x <= 0 or bullet.y >= SCREEN_HEIGHT or bullet.y <= 0:
             bullets.pop(bullets.index(bullet))  # remove bullet
 
     # Key bindings
