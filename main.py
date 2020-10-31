@@ -278,7 +278,8 @@ while run:
             bullet.x += bullet.xvel
         if bullet.y < SCREEN_HEIGHT and bullet.y > 0:
             bullet.y += bullet.yvel
-        else:
+
+        if bullet.x > SCREEN_WIDTH or bullet.x <= 0 or bullet.y > SCREEN_HEIGHT or bullet.y <= 0:
             bullets.pop(bullets.index(bullet))  # remove bullet
 
     # Key bindings
@@ -314,19 +315,25 @@ while run:
         player1.left = True
         player1.right = False
         player1.standing = False
+        if not(keys[pygame.K_UP] or keys[pygame.K_DOWN]):  # reset u/d
+            player1.up = False
+            player1.down = False
 
     if keys[pygame.K_RIGHT] and player1.x < SCREEN_WIDTH - player1.vel - player1.width:
         player1.x += player1.vel
         player1.left = False
         player1.right = True
         player1.standing = False
+        if not(keys[pygame.K_UP] or keys[pygame.K_DOWN]):  # reset u/d
+            player1.up = False
+            player1.down = False
 
     if keys[pygame.K_UP] and player1.y > player1.vel:
         player1.y -= player1.vel
         player1.standing = False
         player1.down = False
         player1.up = True
-        if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):
+        if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):  # reset l/r
             player1.left = False
             player1.right = False
 
@@ -335,12 +342,13 @@ while run:
         player1.standing = False
         player1.down = True
         player1.up = False
-        if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):
+        if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):  # reset l/r
             player1.left = False
             player1.right = False
 
-    if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_UP]):
-        player1.standing = True
+    # default position
+    # if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_UP]):
+    #     player1.standing = True
 
     # Update screen
     redrawGameWindow()
