@@ -1,6 +1,20 @@
 import pygame
 import os
 
+pygame.init()
+
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 480
+MAX_BULLETS = 5
+
+win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Secret Door Game")
+bg = pygame.image.load(os.path.join('resources', 'bg.jpg'))
+char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
+
+font = pygame.font.SysFont('comicsans', 30, True, False)
+clock = pygame.time.Clock()
+
 
 class Player(object):
     walkRight = [
@@ -33,12 +47,11 @@ class Player(object):
         self.width = width
         self.height = height
         self.vel = 5
-        self.isJump = False
-        self.jumpCount = 10
         self.walkCount = 0
         self.left = False
         self.right = False
         self.standing = True
+        self.health = 9
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
 
     def draw(self, win):
@@ -58,20 +71,42 @@ class Player(object):
             else:
                 win.blit(self.walkLeft[0], (self.x, self.y))
 
+        # healthbar
+        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5)) # red
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50 - round(((50/9)*(9 - self.health))), 5)) # green
+
         # hitbox
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
         # pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)  # draw hitbox
 
     def hit(self):
-        self.isJump = False
-        self.jumpCount = 10
         self.x = 60
         self.y = 410
         self.walkCount = 0
-        font1 = pygame.font.SysFont('comicsans', 100)
-        text = font1.render('-5', 1, (255, 0, 0))
-        win.blit(text, (SCREEN_WIDTH/2 - (text.get_width()/2), SCREEN_HEIGHT/2 - (text.get_height()/2)))
         pygame.display.update()
+
+        # take damage
+        if self.health > 0:
+            self.health -= 1
+        else:
+            font1 = pygame.font.SysFont('comicsans', 100)
+            text = font1.render('Game Over', 1, (255, 0, 0))
+            win.blit(text, (round(SCREEN_WIDTH/2 - (text.get_width()/2)), round(SCREEN_HEIGHT/2 - (text.get_height()/2))))
+            pygame.display.update()
+            i = 0
+            while i < 200:
+                pygame.time.delay(10)
+                i += 1
+                for event in pygame.event.get():  # prevent delay if exiting program
+                    if event.type == pygame.quit:
+                        i = 51
+                        pygame.quit()
+                if i == 49:
+                    pygame.quit()
+
+        pygame.display.update()
+
+        # delay, then reset position
         i = 0
         while i < 50:
             pygame.time.delay(10)
@@ -135,11 +170,11 @@ class Enemy(object):
             win.blit(self.walkLeft[self.walkCount // 3], (self.x, self.y))
 
         # healthbar
-        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10)) # red
-        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - ((50/9)*(9 - self.health)), 10)) # green
+        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5)) # red
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50 - round(((50/9)*(9 - self.health))), 5)) # green
 
         # hitbox
-        self.hitbox = (self.x + 17, self.y + 2, 31, 57)
+        self.hitbox = (self.x + 17, self.y + 11, 29, 52)
         # pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)  # draw hitbox
 
     def move(self):
@@ -176,25 +211,11 @@ class projectile(object):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
 
 
-pygame.init()
-
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 480
-MAX_BULLETS = 5
-
-win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Secret Door Game")
-bg = pygame.image.load(os.path.join('resources', 'bg.jpg'))
-char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
-
-font = pygame.font.SysFont('comicsans', 30, True, False)
-clock = pygame.time.Clock()
-
-player1 = Player(300, 410, 64, 64)
 score = 0
 shootLoop = 0
 bullets = []
 enemies = []
+player1 = Player(300, 410, 64, 64)
 enemies.append(Enemy(100, 410, 64, 64, 450))
 
 
@@ -219,7 +240,6 @@ while run:
         if player1.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and player1.hitbox[1] + player1.hitbox[3] > enemy.hitbox[1]:
             if player1.hitbox[0] + player1.hitbox[2] > enemy.hitbox[0] and player1.hitbox[0] < enemy.hitbox[0] + enemy.hitbox[2]:
                 player1.hit()
-                score -= 5
 
     if shootLoop > 0:
         shootLoop += 1
@@ -276,18 +296,6 @@ while run:
     else:
         player1.standing = True
         player1.walkCount = 0
-
-    if not(player1.isJump):
-        if keys[pygame.K_UP]:
-            player1.isJump = True
-            player1.walkCount = 0
-    else:
-        if player1.jumpCount >= -10:
-            player1.y -= int((player1.jumpCount * abs(player1.jumpCount)) * 0.5)
-            player1.jumpCount -= 1
-        else:
-            player1.jumpCount = 10
-            player1.isJump = False
 
     redrawGameWindow()
 
