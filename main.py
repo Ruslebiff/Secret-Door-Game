@@ -287,27 +287,20 @@ while run:
         player1.right = False
         player1.standing = False
 
-    elif keys[pygame.K_RIGHT] and player1.x < SCREEN_WIDTH - player1.vel - player1.width:
+    if keys[pygame.K_RIGHT] and player1.x < SCREEN_WIDTH - player1.vel - player1.width:
         player1.x += player1.vel
         player1.left = False
         player1.right = True
         player1.standing = False
 
-    elif keys[pygame.K_UP] and player1.y > player1.vel:
+    if keys[pygame.K_UP] and player1.y > player1.vel:
         player1.y -= player1.vel
-        player1.left = False
-        player1.right = False
-        player1.standing = True
 
-    elif keys[pygame.K_DOWN] and player1.y < SCREEN_HEIGHT - player1.vel - player1.height:
+    if keys[pygame.K_DOWN] and player1.y < SCREEN_HEIGHT - player1.vel - player1.height:
         player1.y += player1.vel
-        player1.left = False
-        player1.right = False
-        player1.standing = True
 
-    else:
+    if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]):
         player1.standing = True
-        player1.walkCount = 0
 
     redrawGameWindow()
 
