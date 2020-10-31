@@ -5,7 +5,7 @@ pygame.init()
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 480
-MAX_BULLETS = 5
+MAX_BULLETS = 20
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Secret Door Game")
@@ -52,6 +52,8 @@ class Player(object):
         self.walkCount = 0
         self.left = False
         self.right = False
+        self.up = False
+        self.down = False
         self.standing = True
         self.health = 9
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
@@ -67,11 +69,12 @@ class Player(object):
             elif self.right:
                 win.blit(self.walkRight[self.walkCount//3], (self.x, self.y))
                 self.walkCount += 1
+            elif self.up:
+                win.blit(self.walkUp, (self.x, self.y))
+            elif self.down:
+                win.blit(self.walkDown, (self.x, self.y))
         else:
-            if self.right:
-                win.blit(self.walkRight[0], (self.x, self.y))
-            else:
-                win.blit(self.walkLeft[0], (self.x, self.y))
+            win.blit(self.walkDown, (self.x, self.y))
 
         # healthbar
         pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5))  # red
@@ -299,11 +302,20 @@ while run:
 
     if keys[pygame.K_UP] and player1.y > player1.vel:
         player1.y -= player1.vel
+        player1.standing = False
+        player1.down = False
+        player1.up = True
+        if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):
+            player1.left = False
+            player1.right = False
 
     if keys[pygame.K_DOWN] and player1.y < SCREEN_HEIGHT - player1.vel - player1.height:
         player1.y += player1.vel
+        player1.standing = False
+        player1.down = True
+        player1.up = False
 
-    if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]):
+    if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_UP]):
         player1.standing = True
 
     redrawGameWindow()
