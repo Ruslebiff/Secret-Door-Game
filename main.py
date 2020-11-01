@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 
 pygame.init()
 
@@ -110,16 +111,6 @@ class Player(object):
         # take damage
         if self.health > 0:
             self.health -= 1
-            
-            # delay, then reset position
-            i = 0
-            while i < 50:
-                pygame.time.delay(10)
-                i += 1
-                for event in pygame.event.get():  # prevent delay if exiting program
-                    if event.type == pygame.quit:
-                        i = 51
-                        pygame.quit()
             pygame.display.update()
         else:  # dead
             font1 = pygame.font.SysFont('comicsans', 100)
@@ -169,14 +160,18 @@ class Enemy(object):
         pygame.image.load(os.path.join('resources', 'enemy_L11.png'))
         ]
 
-    def __init__(self, x, y, width, height, verticalDirection, end):
+    def __init__(self, x, y, verticalDirection, end):
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+        self.width = 64
+        self.height = 64
         self.verticalDirection = verticalDirection
         self.end = end
-        self.path = [self.x, self.end]
+        if verticalDirection:
+            self.path = [self.y, self.end]
+        else:
+            self.path = [self.x, self.end]
+        # self.path = [self.x, self.end]
         self.walkCount = 0
         self.vel = 3
         self.hitbox = (self.x + 17, self.y + 2, 31, 57)
@@ -283,8 +278,29 @@ enemies = []
 doors = []
 player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64)
 statusBar = Statusbar()
-enemies.append(Enemy(100, 410, 64, 64, False, 450))
-enemies.append(Enemy(300, 700, 64, 64, True, 450))
+# enemies.append(Enemy(100, 410, False, 450))
+# enemies.append(Enemy(300, 700, True, 450))
+
+
+def createRandomEnemies(number):
+    global enemies
+
+    for n in range(number):
+        startx = random.randint(0+64, SCREEN_WIDTH-64)
+        starty = random.randint(0+64, SCREEN_HEIGHT-64)
+
+        # prevent enemy from spawning on the player
+        while player1.hitbox[0] + player1.hitbox[2] > startx and player1.hitbox[0] < startx + 64:
+            startx = random.randint(0+64, SCREEN_WIDTH-64)
+            starty = random.randint(0+64, SCREEN_HEIGHT-64)
+
+        vertical = random.randint(0, 1)
+        if vertical:
+            end = starty + 300
+        else:
+            end = startx + 300
+
+        enemies.append(Enemy(startx, starty, vertical, end))
 
 
 def redrawGameWindow():
@@ -308,6 +324,8 @@ def checkTasks():
     if len(enemies) == 0 and len(doors) == 0:
         doors.append(Door(50, 50, 42, 64, (150, 150, 150), True))
 
+
+createRandomEnemies(10)
 
 """ main loop """
 run = True
