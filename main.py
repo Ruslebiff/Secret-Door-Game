@@ -337,6 +337,10 @@ while run:
             facingy = 1
         else:
             facingy = 0
+
+        if not(facingx or facingy):
+            facingy = 1
+        
         if len(bullets) < MAX_BULLETS:
             bullets.append(projectile(
                 round(player1.x + player1.width // 2),
