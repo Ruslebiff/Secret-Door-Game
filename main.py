@@ -25,6 +25,9 @@ class Statusbar(object):
 
     def draw(self, win):
         pygame.Surface.fill(win, (0, 0, 0), (self.x, self.y, self.width, self.height))
+        
+        text = font.render('Health: ', 1, (255, 255, 255))
+        win.blit(text, (round(text.get_width()/4), round(self.height/2 - (text.get_height()/2))))
 
 
 class Player(object):
@@ -86,9 +89,9 @@ class Player(object):
         else:
             win.blit(self.walkDown, (self.x, self.y))
 
-        # healthbar
-        pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50, 5))  # red
-        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0] - 15, self.hitbox[1] - 10, 50 - round(((50/9)*(9 - self.health))), 5))  # green
+        # health bar
+        pygame.draw.rect(win, (255, 0, 0), (120, round(statusBar.height/2 - 5), 50, 10))  # red
+        pygame.draw.rect(win, (0, 255, 0), (120, round(statusBar.height/2 - 5), 50 - round(((50/9)*(9 - self.health))), 10))  # green
 
         # hitbox
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
