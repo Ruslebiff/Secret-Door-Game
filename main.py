@@ -221,6 +221,7 @@ class projectile(object):
 
 
 class Door(object):
+    doorImage = pygame.image.load(os.path.join('resources', 'door.png'))
     def __init__(self, x, y, width, height, color, visible):
         self.x = x
         self.y = y
@@ -233,7 +234,8 @@ class Door(object):
 
     def draw(self, win):
         if self.visible:
-            pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 2)
+            # pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 2)  # draw hitbox
+            win.blit(self.doorImage, (self.x, self.y))
 
     def enter(self):
         if self.enabled:
@@ -249,16 +251,16 @@ player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64
 enemies.append(Enemy(100, 410, 64, 64, 450))
 
 
-
 def redrawGameWindow():
     win.blit(bg, (0, 0))  # background
-    player1.draw(win)
 
     for door in doors:
         door.draw(win)
 
-    for emeny in enemies:
+    for enemy in enemies:
         enemy.draw(win)
+
+    player1.draw(win)
 
     for bullet in bullets:
         bullet.draw(win)
@@ -267,7 +269,7 @@ def redrawGameWindow():
 
 def checkTasks():
     if len(enemies) == 0 and len(doors) == 0:
-        doors.append(Door(50, 50, 80, 120, (150, 150, 150), True))
+        doors.append(Door(50, 50, 42, 64, (150, 150, 150), True))
 
 
 """ main loop """
