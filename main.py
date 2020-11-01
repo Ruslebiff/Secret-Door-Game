@@ -10,7 +10,7 @@ MAX_BULLETS = 10
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Secret Door Game")
-# bg = pygame.image.load(os.path.join('resources', 'background.jpg'))
+bg = pygame.image.load(os.path.join('resources', 'transparent_background.png')) # default background
 backgroundColor = (100, 100, 100)
 char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
 
@@ -266,12 +266,12 @@ class projectile(object):
 class Door(object):
     doorImage = pygame.image.load(os.path.join('resources', 'door.png'))
 
-    def __init__(self, x, y, width, height, color, visible):
+    def __init__(self, x, y, width, height, visible):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.color = color
+        self.color = (150, 150, 150)
         self.visible = visible
         self.enabled = True
         self.hitbox = (self.x, self.y, width, height)
@@ -333,8 +333,10 @@ def createRandomEnemies(number):
 
 
 def redrawGameWindow():
-    pygame.Surface.fill(win, (backgroundColor),(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
-    # win.blit(bg, (0, 0))  # background
+    global doors
+    global bg
+    pygame.Surface.fill(win, (backgroundColor), (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+    win.blit(bg, (0, 0))  # background
     statusBar.draw(win)
 
     for door in doors:
@@ -353,10 +355,16 @@ def redrawGameWindow():
 def checkTasks():
     global doorCreated
     global stageInitialized
+    global bg
     if len(enemies) == 0 and len(doors) == 0 and doorCreated == False and stageInitialized:
-        doors.append(Door(50, 50, 42, 64, (150, 150, 150), True))
+        if stage == 5:
+            doors.append(Door(round(SCREEN_WIDTH/4 * 3 - 20), round(SCREEN_HEIGHT/5 * 4 + 20), 42, 64, False))
+            bg = pygame.image.load(os.path.join('resources', 'bg_kids_withdoor.jpg'))
+        elif stage == 10:
+            doors.append(Door(round(SCREEN_WIDTH/2 + 102), round(SCREEN_HEIGHT/2 - 24), 42, 64, True))
+        else:
+            doors.append(Door(random.randint(100, SCREEN_WIDTH), random.randint(100, SCREEN_HEIGHT), 42, 64, True))
         doorCreated = True
-
 
 """ main loop """
 run = True
@@ -367,6 +375,12 @@ while run:
         stageInitialized = True
         createRandomEnemies(stage)
         backgroundColor = (random.randint(0, 150), random.randint(0, 150), random.randint(0, 150))
+        if stage == 10:
+            bg = pygame.image.load(os.path.join('resources', 'bg_city_carpet.jpg'))
+        elif stage == 5:
+            bg = pygame.image.load(os.path.join('resources', 'bg_kids_nodoor.jpg'))
+        else:
+            bg = pygame.image.load(os.path.join('resources', 'transparent_background.png'))
 
     # Quit game when clicking 'x'
     for event in pygame.event.get():
