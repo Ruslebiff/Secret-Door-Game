@@ -3,13 +3,13 @@ import os
 
 pygame.init()
 
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 480
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 800
 MAX_BULLETS = 20
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Secret Door Game")
-bg = pygame.image.load(os.path.join('resources', 'bg.jpg'))
+bg = pygame.image.load(os.path.join('resources', 'background.jpg'))
 char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
 
 font = pygame.font.SysFont('comicsans', 30, True, False)
@@ -213,8 +213,8 @@ class projectile(object):
         self.color = color
         self.facingx = facingx  # projectile goes left or right
         self.facingy = facingy  # projectile goes up or down
-        self.xvel = 8 * facingx
-        self.yvel = 8 * facingy
+        self.xvel = 12 * facingx
+        self.yvel = 12 * facingy
 
     def draw(self, win):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
