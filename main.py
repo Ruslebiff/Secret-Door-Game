@@ -430,6 +430,7 @@ while run:
             if player1.hitbox[1] < door.hitbox[1] + door.hitbox[3] and player1.hitbox[1] + player1.hitbox[3] > door.hitbox[1]:
                 if player1.hitbox[0] + player1.width > door.hitbox[0] and player1.hitbox[0] < door.hitbox[0] + door.hitbox[2]:
                     door.enter()
+                    player1.health += 1
 
     if keys[pygame.K_SPACE] and shootLoop == 0:
         if player1.right:
