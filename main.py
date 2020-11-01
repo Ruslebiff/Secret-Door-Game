@@ -247,13 +247,15 @@ enemies = []
 doors = []
 player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64)
 enemies.append(Enemy(100, 410, 64, 64, 450))
-doors.append(Door(50, 50, 80, 120, (150, 150, 150), True))
+
 
 
 def redrawGameWindow():
     win.blit(bg, (0, 0))  # background
-    doors[0].draw(win)
     player1.draw(win)
+
+    for door in doors:
+        door.draw(win)
 
     for emeny in enemies:
         enemy.draw(win)
@@ -261,6 +263,11 @@ def redrawGameWindow():
     for bullet in bullets:
         bullet.draw(win)
     pygame.display.update()
+
+
+def checkTasks():
+    if len(enemies) == 0 and len(doors) == 0:
+        doors.append(Door(50, 50, 80, 120, (150, 150, 150), True))
 
 
 """ main loop """
@@ -378,6 +385,10 @@ while run:
     # default position
     # if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_UP]):
     #     player1.standing = True
+
+
+    # Check win conditions, spawn door
+    checkTasks()
 
     # Update screen
     redrawGameWindow()
