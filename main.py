@@ -16,6 +16,17 @@ font = pygame.font.SysFont('comicsans', 30, True, False)
 clock = pygame.time.Clock()
 
 
+class Statusbar(object):
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.width = SCREEN_WIDTH
+        self.height = 30
+
+    def draw(self, win):
+        pygame.Surface.fill(win, (0, 0, 0), (self.x, self.y, self.width, self.height))
+
+
 class Player(object):
     walkUp = pygame.image.load(os.path.join('resources', 'player_behind.png'))
     walkDown = pygame.image.load(os.path.join('resources', 'player_front.png'))
@@ -85,14 +96,25 @@ class Player(object):
 
     def hit(self):
         self.x = round(SCREEN_WIDTH/2 - 32)
-        self.y = round(SCREEN_HEIGHT/2 - 32)
+        self.y = round((SCREEN_HEIGHT)/2 - 32)
         self.walkCount = 0
         pygame.display.update()
 
         # take damage
         if self.health > 0:
             self.health -= 1
-        else:
+            
+            # delay, then reset position
+            i = 0
+            while i < 50:
+                pygame.time.delay(10)
+                i += 1
+                for event in pygame.event.get():  # prevent delay if exiting program
+                    if event.type == pygame.quit:
+                        i = 51
+                        pygame.quit()
+            pygame.display.update()
+        else:  # dead
             font1 = pygame.font.SysFont('comicsans', 100)
             text = font1.render('Game Over', 1, (255, 0, 0))
             win.blit(text, (round(SCREEN_WIDTH/2 - (text.get_width()/2)), round(SCREEN_HEIGHT/2 - (text.get_height()/2))))
@@ -106,18 +128,6 @@ class Player(object):
                         i = 51
                         pygame.quit()
                 if i == 49:
-                    pygame.quit()
-
-        pygame.display.update()
-
-        # delay, then reset position
-        i = 0
-        while i < 50:
-            pygame.time.delay(10)
-            i += 1
-            for event in pygame.event.get():  # prevent delay if exiting program
-                if event.type == pygame.quit:
-                    i = 51
                     pygame.quit()
 
 
@@ -222,6 +232,7 @@ class projectile(object):
 
 class Door(object):
     doorImage = pygame.image.load(os.path.join('resources', 'door.png'))
+
     def __init__(self, x, y, width, height, color, visible):
         self.x = x
         self.y = y
@@ -248,11 +259,13 @@ bullets = []
 enemies = []
 doors = []
 player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64)
+statusBar = Statusbar()
 enemies.append(Enemy(100, 410, 64, 64, 450))
 
 
 def redrawGameWindow():
     win.blit(bg, (0, 0))  # background
+    statusBar.draw(win)
 
     for door in doors:
         door.draw(win)
@@ -338,9 +351,9 @@ while run:
         else:
             facingy = 0
 
-        if not(facingx or facingy):
+        if not(facingx or facingy):  # bullets must have a direction
             facingy = 1
-        
+
         if len(bullets) < MAX_BULLETS:
             bullets.append(projectile(
                 round(player1.x + player1.width // 2),
@@ -370,7 +383,7 @@ while run:
             player1.up = False
             player1.down = False
 
-    if keys[pygame.K_UP] and player1.y > player1.vel:
+    if keys[pygame.K_UP] and player1.y > player1.vel and player1.y > statusBar.height:
         player1.y -= player1.vel
         # player1.standing = False
         player1.down = False
@@ -391,7 +404,6 @@ while run:
     # default position
     # if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_UP]):
     #     player1.standing = True
-
 
     # Check win conditions, spawn door
     checkTasks()
