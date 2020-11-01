@@ -321,11 +321,11 @@ def createRandomEnemies(number):
 
         vertical = random.randint(0, 1)
         if vertical:
-            end = random.randint(starty, SCREEN_HEIGHT)
+            end = random.randint(starty + 50, SCREEN_HEIGHT)
             if end - starty < 150:
                 end += 150
         else:
-            end = random.randint(starty, SCREEN_WIDTH)
+            end = random.randint(startx + 50, SCREEN_WIDTH)
             if end - startx < 150:
                 end += 150
 
