@@ -14,7 +14,6 @@ char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
 
 font = pygame.font.SysFont('comicsans', 30, True, False)
 clock = pygame.time.Clock()
-global score
 score = 0
 
 
