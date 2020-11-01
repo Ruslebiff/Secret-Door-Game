@@ -6,7 +6,7 @@ pygame.init()
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 800
-MAX_BULLETS = 20
+MAX_BULLETS = 10
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Secret Door Game")
@@ -35,8 +35,11 @@ class Statusbar(object):
         text = font.render('Health: ', 1, (255, 255, 255))
         win.blit(text, (round(text.get_width()/4), round(self.height/2 - (text.get_height()/2))))
 
+        text = font.render('Ammo: ' + str(MAX_BULLETS - len(bullets)), 1, (255, 255, 255))
+        win.blit(text, (300, round(self.height/2 - (text.get_height()/2))))
+
         text = font.render('Enemies left: ' + str(len(enemies)), 1, (255, 255, 255))
-        win.blit(text, (400, round(self.height/2 - (text.get_height()/2))))
+        win.blit(text, (500, round(self.height/2 - (text.get_height()/2))))
 
         text = font.render('Stage: ' + str(stage), 1, (255, 255, 255))
         win.blit(text, (800, round(self.height/2 - (text.get_height()/2))))
@@ -283,12 +286,15 @@ class Door(object):
         global score
         global doorCreated
         global stageInitialized
+        global MAX_BULLETS
 
         if self.enabled:
             print('Entered door for stage ' + str(stage))
             doors.pop(doors.index(door))
             stage += 1
             score += 10
+            if stage % 5 == 0:
+                MAX_BULLETS += 3
             doorCreated = False
             stageInitialized = False
 
