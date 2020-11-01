@@ -16,3 +16,6 @@ Controls:
 Arrow keys - move player
 Space bar - Shoot
 Return key - Enter door
+
+Screenshots:
+![screenshot](https://i.imgur.com/Uc3defv.gif)
