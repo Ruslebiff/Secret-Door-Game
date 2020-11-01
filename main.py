@@ -86,8 +86,8 @@ class Player(object):
         self.right = False
         self.up = False
         self.down = False
-        # self.standing = True
         self.health = 9
+        self.max_health = 9
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
 
     def draw(self, win):
@@ -109,7 +109,7 @@ class Player(object):
 
         # health bar
         pygame.draw.rect(win, (255, 0, 0), (120, round(statusBar.height/2 - 5), 50, 10))  # red
-        pygame.draw.rect(win, (0, 255, 0), (120, round(statusBar.height/2 - 5), 50 - round(((50/9)*(9 - self.health))), 10))  # green
+        pygame.draw.rect(win, (0, 255, 0), (120, round(statusBar.height/2 - 5), 50 - round(((50/self.max_health)*(self.max_health - self.health))), 10))  # green
 
         # hitbox
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
@@ -430,7 +430,8 @@ while run:
             if player1.hitbox[1] < door.hitbox[1] + door.hitbox[3] and player1.hitbox[1] + player1.hitbox[3] > door.hitbox[1]:
                 if player1.hitbox[0] + player1.width > door.hitbox[0] and player1.hitbox[0] < door.hitbox[0] + door.hitbox[2]:
                     door.enter()
-                    player1.health += 1
+                    if player1.health < player1.max_health:
+                        player1.health += 1
 
     if keys[pygame.K_SPACE] and shootLoop == 0:
         if player1.right:
