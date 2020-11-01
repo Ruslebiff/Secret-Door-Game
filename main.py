@@ -378,21 +378,25 @@ while run:
 
     # Bullets
     for bullet in bullets:
-        # hit enemies
-        for enemy in enemies:
-            if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
-                if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
-                    enemy.hit()
-                    bullets.pop(bullets.index(bullet))
-
         # move bullet
         if bullet.x < SCREEN_WIDTH and bullet.x > 0:
             bullet.x += bullet.xvel
         if bullet.y < SCREEN_HEIGHT and bullet.y > 0:
             bullet.y += bullet.yvel
 
+        # out of screen
         if bullet.x >= SCREEN_WIDTH or bullet.x <= 0 or bullet.y >= SCREEN_HEIGHT or bullet.y <= 0:
             bullets.pop(bullets.index(bullet))  # remove bullet
+        else:
+            # hit enemies
+            removedByEnemy = False
+            for enemy in enemies:
+                if not removedByEnemy:
+                    if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
+                        if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
+                            enemy.hit()
+                            removedByEnemy = True
+                            bullets.pop(bullets.index(bullet))
 
     # Key bindings
     keys = pygame.key.get_pressed()
