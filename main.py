@@ -31,6 +31,12 @@ class Statusbar(object):
         text = font.render('Health: ', 1, (255, 255, 255))
         win.blit(text, (round(text.get_width()/4), round(self.height/2 - (text.get_height()/2))))
 
+        text = font.render('Enemies left: ' + str(len(enemies)), 1, (255, 255, 255))
+        win.blit(text, (400, round(self.height/2 - (text.get_height()/2))))
+
+        text = font.render('Stage: ' + str("1"), 1, (255, 255, 255))
+        win.blit(text, (800, round(self.height/2 - (text.get_height()/2))))
+
         text = font.render('Score: ' + str(score), 1, (255, 255, 255))
         win.blit(text, (1000, round(self.height/2 - (text.get_height()/2))))
 
