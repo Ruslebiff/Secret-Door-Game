@@ -10,7 +10,8 @@ MAX_BULLETS = 20
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Secret Door Game")
-bg = pygame.image.load(os.path.join('resources', 'background.jpg'))
+# bg = pygame.image.load(os.path.join('resources', 'background.jpg'))
+backgroundColor = (100, 100, 100)
 char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
 
 font = pygame.font.SysFont('comicsans', 30, True, False)
@@ -326,7 +327,8 @@ def createRandomEnemies(number):
 
 
 def redrawGameWindow():
-    win.blit(bg, (0, 0))  # background
+    pygame.Surface.fill(win, (backgroundColor),(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+    # win.blit(bg, (0, 0))  # background
     statusBar.draw(win)
 
     for door in doors:
@@ -358,6 +360,7 @@ while run:
     if not stageInitialized:
         stageInitialized = True
         createRandomEnemies(stage)
+        backgroundColor = (random.randint(0, 150), random.randint(0, 150), random.randint(0, 150))
 
     # Quit game when clicking 'x'
     for event in pygame.event.get():
