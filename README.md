@@ -12,7 +12,10 @@ Every fifth stage will increase the maximum ammunition by 3.
 
 You get +10 score for reaching a new stage and +5 score for killing an enemy.
 
+
+
 Controls:
+
 Arrow keys - move player
 
 Space bar - Shoot
