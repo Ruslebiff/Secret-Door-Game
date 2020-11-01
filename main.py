@@ -16,6 +16,9 @@ char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
 font = pygame.font.SysFont('comicsans', 30, True, False)
 clock = pygame.time.Clock()
 score = 0
+stage = 1
+doorCreated = False
+stageInitialized = False
 
 
 class Statusbar(object):
@@ -34,7 +37,7 @@ class Statusbar(object):
         text = font.render('Enemies left: ' + str(len(enemies)), 1, (255, 255, 255))
         win.blit(text, (400, round(self.height/2 - (text.get_height()/2))))
 
-        text = font.render('Stage: ' + str("1"), 1, (255, 255, 255))
+        text = font.render('Stage: ' + str(stage), 1, (255, 255, 255))
         win.blit(text, (800, round(self.height/2 - (text.get_height()/2))))
 
         text = font.render('Score: ' + str(score), 1, (255, 255, 255))
@@ -73,7 +76,7 @@ class Player(object):
         self.y = y
         self.width = width
         self.height = height
-        self.vel = 5
+        self.vel = 7
         self.walkCount = 0
         self.left = False
         self.right = False
@@ -177,9 +180,10 @@ class Enemy(object):
             self.path = [self.y, self.end]
         else:
             self.path = [self.x, self.end]
-        # self.path = [self.x, self.end]
         self.walkCount = 0
-        self.vel = 3
+        global stage
+        self.maxvel = stage + 1
+        self.vel = random.randint(2, self.maxvel)
         self.hitbox = (self.x + 17, self.y + 2, 31, 57)
         self.health = 9
 
@@ -274,8 +278,18 @@ class Door(object):
             win.blit(self.doorImage, (self.x, self.y))
 
     def enter(self):
+        global stage
+        global score
+        global doorCreated
+        global stageInitialized
+
         if self.enabled:
-            print('Entered door!')
+            print('Entered door for stage ' + str(stage))
+            doors.pop(doors.index(door))
+            stage += 1
+            score += 10
+            doorCreated = False
+            stageInitialized = False
 
 
 shootLoop = 0
@@ -284,8 +298,6 @@ enemies = []
 doors = []
 player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64)
 statusBar = Statusbar()
-# enemies.append(Enemy(100, 410, False, 450))
-# enemies.append(Enemy(300, 700, True, 450))
 
 
 def createRandomEnemies(number):
@@ -302,9 +314,13 @@ def createRandomEnemies(number):
 
         vertical = random.randint(0, 1)
         if vertical:
-            end = starty + 300
+            end = random.randint(starty, SCREEN_HEIGHT)
+            if end - starty < 150:
+                end += 150
         else:
-            end = startx + 300
+            end = random.randint(starty, SCREEN_WIDTH)
+            if end - startx < 150:
+                end += 150
 
         enemies.append(Enemy(startx, starty, vertical, end))
 
@@ -327,16 +343,21 @@ def redrawGameWindow():
 
 
 def checkTasks():
-    if len(enemies) == 0 and len(doors) == 0:
+    global doorCreated
+    global stageInitialized
+    if len(enemies) == 0 and len(doors) == 0 and doorCreated == False and stageInitialized:
         doors.append(Door(50, 50, 42, 64, (150, 150, 150), True))
+        doorCreated = True
 
-
-createRandomEnemies(10)
 
 """ main loop """
 run = True
 while run:
     clock.tick(27)
+
+    if not stageInitialized:
+        stageInitialized = True
+        createRandomEnemies(stage)
 
     # Quit game when clicking 'x'
     for event in pygame.event.get():
@@ -416,7 +437,6 @@ while run:
         player1.x -= player1.vel
         player1.left = True
         player1.right = False
-        # player1.standing = False
         if not(keys[pygame.K_UP] or keys[pygame.K_DOWN]):  # reset u/d
             player1.up = False
             player1.down = False
@@ -425,14 +445,12 @@ while run:
         player1.x += player1.vel
         player1.left = False
         player1.right = True
-        # player1.standing = False
         if not(keys[pygame.K_UP] or keys[pygame.K_DOWN]):  # reset u/d
             player1.up = False
             player1.down = False
 
     if keys[pygame.K_UP] and player1.y > player1.vel and player1.y > statusBar.height:
         player1.y -= player1.vel
-        # player1.standing = False
         player1.down = False
         player1.up = True
         if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):  # reset l/r
@@ -441,16 +459,11 @@ while run:
 
     if keys[pygame.K_DOWN] and player1.y < SCREEN_HEIGHT - player1.vel - player1.height:
         player1.y += player1.vel
-        # player1.standing = False
         player1.down = True
         player1.up = False
         if not(keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):  # reset l/r
             player1.left = False
             player1.right = False
-
-    # default position
-    # if not(keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_UP]):
-    #     player1.standing = True
 
     # Check win conditions, spawn door
     checkTasks()
