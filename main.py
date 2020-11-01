@@ -14,6 +14,8 @@ char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
 
 font = pygame.font.SysFont('comicsans', 30, True, False)
 clock = pygame.time.Clock()
+global score
+score = 0
 
 
 class Statusbar(object):
@@ -25,9 +27,12 @@ class Statusbar(object):
 
     def draw(self, win):
         pygame.Surface.fill(win, (0, 0, 0), (self.x, self.y, self.width, self.height))
-        
+
         text = font.render('Health: ', 1, (255, 255, 255))
         win.blit(text, (round(text.get_width()/4), round(self.height/2 - (text.get_height()/2))))
+
+        text = font.render('Score: ' + str(score), 1, (255, 255, 255))
+        win.blit(text, (1000, round(self.height/2 - (text.get_height()/2))))
 
 
 class Player(object):
@@ -216,6 +221,8 @@ class Enemy(object):
             self.health -= 1
         else:
             enemies.pop(enemies.index(enemy))
+            global score
+            score += 5
 
 
 class projectile(object):
@@ -256,7 +263,6 @@ class Door(object):
             print('Entered door!')
 
 
-score = 0
 shootLoop = 0
 bullets = []
 enemies = []
@@ -317,7 +323,6 @@ while run:
             if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
                 if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
                     enemy.hit()
-                    score += 1
                     bullets.pop(bullets.index(bullet))
 
         # move bullet
