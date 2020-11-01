@@ -9,7 +9,7 @@ SCREEN_HEIGHT = 800
 MAX_BULLETS = 10
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Secret Door Game")
+pygame.display.set_caption("Secret Door")
 bg = pygame.image.load(os.path.join('resources', 'transparent_background.png')) # default background
 backgroundColor = (100, 100, 100)
 char = pygame.image.load(os.path.join('resources', 'player_standing.png'))
