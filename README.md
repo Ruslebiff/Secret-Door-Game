@@ -14,7 +14,9 @@ You get +10 score for reaching a new stage and +5 score for killing an enemy.
 
 Controls:
 Arrow keys - move player
+
 Space bar - Shoot
+
 Return key - Enter door
 
 Screenshots:
