@@ -169,11 +169,12 @@ class Enemy(object):
         pygame.image.load(os.path.join('resources', 'enemy_L11.png'))
         ]
 
-    def __init__(self, x, y, width, height, end):
+    def __init__(self, x, y, width, height, verticalDirection, end):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.verticalDirection = verticalDirection
         self.end = end
         self.path = [self.x, self.end]
         self.walkCount = 0
@@ -203,17 +204,31 @@ class Enemy(object):
 
     def move(self):
         if self.vel > 0:
-            if self.x + self.vel < self.path[1]:
-                self.x += self.vel
+            if self.verticalDirection:
+                if self.y + self.vel < self.path[1]:
+                    self.y += self.vel
+                else:
+                    self.vel = self.vel * -1
+                    self.walkCount = 0
             else:
-                self.vel = self.vel * -1
-                self.walkCount = 0
+                if self.x + self.vel < self.path[1]:
+                    self.x += self.vel
+                else:
+                    self.vel = self.vel * -1
+                    self.walkCount = 0
         else:
-            if self.x - self.vel > self.path[0]:
-                self.x += self.vel
+            if self.verticalDirection:
+                if self.y - self.vel > self.path[0]:
+                    self.y += self.vel
+                else:
+                    self.vel = self.vel * -1
+                    self.walkCount = 0
             else:
-                self.vel = self.vel * -1
-                self.walkCount = 0
+                if self.x - self.vel > self.path[0]:
+                    self.x += self.vel
+                else:
+                    self.vel = self.vel * -1
+                    self.walkCount = 0
 
     def hit(self):
         if self.health > 0:
@@ -268,7 +283,8 @@ enemies = []
 doors = []
 player1 = Player(round(SCREEN_WIDTH/2 - 32), round(SCREEN_HEIGHT/2 - 32), 64, 64)
 statusBar = Statusbar()
-enemies.append(Enemy(100, 410, 64, 64, 450))
+enemies.append(Enemy(100, 410, 64, 64, False, 450))
+enemies.append(Enemy(300, 700, 64, 64, True, 450))
 
 
 def redrawGameWindow():
@@ -318,7 +334,7 @@ while run:
     # Bullets
     for bullet in bullets:
         # hit enemies
-        for enemiy in enemies:
+        for enemy in enemies:
             if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
                 if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
                     enemy.hit()
